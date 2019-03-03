@@ -123,6 +123,7 @@ void jukebox( void )
 			switch (lastkey_sym)
 			{
 			case SDLK_ESCAPE: // quit jukebox
+			case SDLK_RCTRL:
 			case SDLK_q:
 				trigger_quit = true;
 				break;

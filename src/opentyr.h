@@ -19,11 +19,12 @@
 #ifndef OPENTYR_H
 #define OPENTYR_H
 
-#include "SDL_types.h"
+#include <SDL/SDL_types.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-#define COUNTOF(x) ((unsigned)(sizeof(x) / sizeof *(x)))  // use only on arrays!
+#define COUNTOF(x) ((uint32_t)(sizeof(x) / sizeof *(x)))  // use only on arrays!
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -37,15 +38,15 @@
 #define M_PI_4  0.78539816339744830962  // pi/4
 #endif
 
-typedef unsigned int uint;
-typedef unsigned long ulong;
+typedef uint32_t uint;
+typedef uint64_t ulong;
 
 // Pascal types, yuck.
-typedef Sint32 JE_longint;
-typedef Sint16 JE_integer;
-typedef Sint8  JE_shortint;
-typedef Uint16 JE_word;
-typedef Uint8  JE_byte;
+typedef int32_t JE_longint;
+typedef int16_t JE_integer;
+typedef int8_t  JE_shortint;
+typedef uint16_t JE_word;
+typedef uint8_t  JE_byte;
 typedef bool   JE_boolean;
 typedef char   JE_char;
 typedef float  JE_real;

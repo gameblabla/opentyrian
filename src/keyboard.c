@@ -23,15 +23,15 @@
 #include "video.h"
 #include "video_scale.h"
 
-#include "SDL.h"
+#include <SDL/SDL.h>
 
 
 JE_boolean ESCPressed;
 
-JE_boolean newkey, newmouse, keydown, mousedown;
+int32_t newkey, newmouse, keydown, mousedown;
 SDLKey lastkey_sym;
 SDLMod lastkey_mod;
-unsigned char lastkey_char;
+int32_t lastkey_char;
 Uint8 lastmouse_but;
 Uint16 lastmouse_x, lastmouse_y;
 JE_boolean mouse_pressed[3] = {false, false, false};

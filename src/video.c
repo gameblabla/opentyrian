@@ -33,6 +33,53 @@ SDL_Surface *game_screen;
 
 static ScalerFunction scaler_function;
 
+#ifdef ARCADEMINI
+#define AVERAGE(z, x) ((((z) & 0xF7DEF7DE) >> 1) + (((x) & 0xF7DEF7DE) >> 1))
+#define AVERAGEHI(AB) ((((AB) & 0xF7DE0000) >> 1) + (((AB) & 0xF7DE) << 15))
+#define AVERAGELO(CD) ((((CD) & 0xF7DE) >> 1) + (((CD) & 0xF7DE0000) >> 17))
+
+void upscale_320xXXX_to_480x272(uint32_t *dst, uint32_t *src, uint32_t height)
+{
+	uint32_t midh = 272 * (3 / 4);
+	uint32_t Eh = 0;
+	uint32_t source = 0;
+	uint32_t dh = 0;
+	uint32_t y, x;
+
+	for (y = 0; y < 272; y++)
+	{
+		source = dh * 320/2;
+
+		for (x = 0; x < 480/6; x++)
+		{
+			register uint32_t ab, cd;
+
+			__builtin_prefetch(dst + 4, 1);
+			__builtin_prefetch(src + source + 4, 0);
+
+			ab = src[source] & 0xF7DEF7DE;
+			cd = src[source + 1] & 0xF7DEF7DE;
+			/*if(Eh >= midh) // average + 256
+			{ 
+				ab = AVERAGE(ab, src[source + 320/2]) & 0xF7DEF7DE; // to prevent overflow
+				cd = AVERAGE(cd, src[source + 320/2 + 1]) & 0xF7DEF7DE; // to prevent overflow
+			}*/
+			*dst++ = (ab & 0xFFFF) + AVERAGEHI(ab);
+			*dst++ = (ab >> 16) + ((cd & 0xFFFF) << 16);
+			*dst++ = (cd & 0xFFFF0000) + AVERAGELO(cd);
+
+			source += 2;
+		}
+		Eh += height;
+		if(Eh >= 272)
+		{
+			Eh -= 272;
+			dh++; 
+		}
+	}
+}
+#endif
+
 void init_video( void )
 {
 	if (SDL_WasInit(SDL_INIT_VIDEO))
@@ -96,13 +143,22 @@ bool init_scaler( unsigned int new_scaler, bool fullscreen )
 {
 	int w = scalers[new_scaler].width,
 	    h = scalers[new_scaler].height;
-	int bpp = can_init_scaler(new_scaler, fullscreen);
+	int bpp = 16;
 	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
 	
 	if (bpp == 0)
 		return false;
 	
-	SDL_Surface *const surface = SDL_SetVideoMode(w, h, bpp, flags);
+	SDL_Surface *surface = SDL_SetVideoMode(w, h, 16,
+#ifdef VGA_CENTERED
+	SDL_HWSURFACE | SDL_DOUBLEBUF
+#else
+	SDL_HWSURFACE
+	#ifdef SDL_TRIPLEBUF
+	| SDL_TRIPLEBUF
+	#endif
+#endif
+	);
 	
 	if (surface == NULL)
 	{
@@ -189,7 +245,15 @@ void scale_and_flip( SDL_Surface *src_surface )
 	SDL_Surface *dst_surface = SDL_GetVideoSurface();
 	
 	assert(scaler_function != NULL);
+	
+#ifdef ARCADEMINI
+	SDL_Surface* tmp;
+	tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 16, 0, 0, 0, 0);
+	scaler_function(src_surface, tmp);
+	upscale_320xXXX_to_480x272((uint32_t*)dst_surface->pixels, (uint32_t*)tmp->pixels, 200);
+#else
 	scaler_function(src_surface, dst_surface);
+#endif
 	
 	SDL_Flip(dst_surface);
 }

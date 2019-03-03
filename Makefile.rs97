@@ -1,6 +1,6 @@
 # BUILD SETTINGS ###########################################
 
-CC := gcc
+CC := /opt/rs97-toolchain/bin/mipsel-linux-gcc
 
 ifneq ($(filter Msys Cygwin, $(shell uname -o)), )
     PLATFORM := WIN32
@@ -14,7 +14,7 @@ WITH_NETWORK := false
 
 ############################################################
 
-STRIP := strip
+STRIP := /opt/rs97-toolchain/bin/mipsel-linux-strip
 
 SDL_CONFIG := sdl-config
 
@@ -23,11 +23,7 @@ OBJS := $(SRCS:src/%.c=obj/%.o)
 
 # FLAGS ####################################################
 
-ifneq ($(MAKECMDGOALS), release)
-    EXTRA_CFLAGS += -g3 -O0 -Werror
-else
-    EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
-endif
+EXTRA_CFLAGS +=  -O2 -fdata-sections -ffunction-sections -DNDEBUG -fno-PIC -fno-common -mips32 -fno-PIC -mno-abicalls -mframe-header-opt -flto
 EXTRA_CFLAGS += -MMD -pedantic
 ifeq ($(WITH_NETWORK), true)
     EXTRA_CFLAGS += -DWITH_NETWORK
@@ -49,7 +45,7 @@ endif
 
 ALL_CFLAGS += -std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
 ALL_LDFLAGS += $(LDFLAGS)
-LDLIBS += $(EXTRA_LDLIBS) $(SDL_LDLIBS)
+LDLIBS += $(EXTRA_LDLIBS) $(SDL_LDLIBS)  -Wl,--as-needed -Wl,--gc-sections -flto -s
 
 # RULES ####################################################
 

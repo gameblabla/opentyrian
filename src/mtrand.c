@@ -49,10 +49,10 @@
 #define UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
-static unsigned long x[N];      /* the array for the state vector  */
-static unsigned long *p0, *p1, *pm;
+static uint64_t x[N];      /* the array for the state vector  */
+static uint64_t *p0, *p1, *pm;
 
-void mt_srand( unsigned long s )
+void mt_srand( uint64_t s )
 {
 	int i;
 	
@@ -67,9 +67,9 @@ void mt_srand( unsigned long s )
 }
 
 /* generates a random number on the interval [0,0xffffffff] */
-unsigned long mt_rand( void )
+uint64_t mt_rand( void )
 {
-	unsigned long y;
+	uint64_t y;
 
 	if (!p0) {
 		/* Default seed */

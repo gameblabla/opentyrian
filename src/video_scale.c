@@ -45,7 +45,19 @@ uint scaler;
 const struct Scalers scalers[] =
 {
 #if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
+
+#ifdef ARCADEMINI
+	{ 480,           272,            no_scale, nn_16,      nn_32,      "None" },
+#else
+
+#ifdef VGA_CENTERED
 	{ 320,           240,            no_scale, nn_16,      nn_32,      "None" },
+#else
+	{ 320,           200,            no_scale, nn_16,      nn_32,      "None" },
+#endif
+
+#endif
+	
 #else
 	{ 1 * vga_width, 1 * vga_height, no_scale, nn_16,      nn_32,      "None" },
 	{ 2 * vga_width, 2 * vga_height, NULL,     nn_16,      nn_32,      "2x" },
@@ -73,7 +85,7 @@ void set_scaler_by_name( const char *name )
 }
 
 #if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-#define VGA_CENTERED
+//#define VGA_CENTERED
 #endif
 
 void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface )

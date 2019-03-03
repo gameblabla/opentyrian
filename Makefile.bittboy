@@ -1,6 +1,6 @@
 # BUILD SETTINGS ###########################################
 
-CC := gcc
+CC = /opt/bittboy-toolchain/usr/bin/arm-miyoo-linux-musleabi-gcc
 
 ifneq ($(filter Msys Cygwin, $(shell uname -o)), )
     PLATFORM := WIN32
@@ -14,20 +14,16 @@ WITH_NETWORK := false
 
 ############################################################
 
-STRIP := strip
+STRIP := /opt/bittboy-toolchain/usr/bin/arm-miyoo-linux-musleabi-strip
 
-SDL_CONFIG := sdl-config
+SDL_CONFIG = /opt/bittboy-toolchain/arm-miyoo-linux-musleabi/sysroot/usr/bin/sdl-config
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
 
 # FLAGS ####################################################
 
-ifneq ($(MAKECMDGOALS), release)
-    EXTRA_CFLAGS += -g3 -O0 -Werror
-else
-    EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
-endif
+EXTRA_CFLAGS +=  -O2 -fdata-sections -ffunction-sections -DNDEBUG -fno-PIC -fno-common -fno-PIC -DVGA_CENTERED -flto
 EXTRA_CFLAGS += -MMD -pedantic
 ifeq ($(WITH_NETWORK), true)
     EXTRA_CFLAGS += -DWITH_NETWORK
@@ -42,14 +38,14 @@ endif
 EXTRA_LDLIBS += -lm
 
 SDL_CFLAGS := 
-SDL_LDLIBS := -lSDL
+SDL_LDLIBS := -lSDL -lasound
 ifeq ($(WITH_NETWORK), true)
     SDL_LDLIBS += -lSDL_net
 endif
 
 ALL_CFLAGS += -std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
 ALL_LDFLAGS += $(LDFLAGS)
-LDLIBS += $(EXTRA_LDLIBS) $(SDL_LDLIBS)
+LDLIBS += $(EXTRA_LDLIBS) $(SDL_LDLIBS)  -Wl,--as-needed -Wl,--gc-sections -flto -s
 
 # RULES ####################################################
 

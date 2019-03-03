@@ -289,9 +289,9 @@ void JE_helpSystem( JE_byte startTopic )
 								break;
 						}
 					}
-				} while (!(lastkey_sym == SDLK_ESCAPE || lastkey_sym == SDLK_RETURN));
+				} while (!(lastkey_sym == SDLK_ESCAPE || lastkey_sym == SDLK_RCTRL || lastkey_sym == SDLK_RETURN || lastkey_sym == SDLK_LCTRL || lastkey_sym == SDLK_LALT));
 
-				if (lastkey_sym == SDLK_RETURN)
+				if (lastkey_sym == SDLK_RETURN || lastkey_sym == SDLK_LCTRL)
 				{
 					page = topicStart[menu-1];
 					JE_playSampleNum(S_CLICK);
@@ -403,6 +403,7 @@ void JE_helpSystem( JE_byte startTopic )
 					case SDLK_DOWN:
 					case SDLK_PAGEDOWN:
 					case SDLK_RETURN:
+					case SDLK_LCTRL:
 					case SDLK_SPACE:
 						if (page == MAX_PAGE)
 						{
@@ -426,7 +427,7 @@ void JE_helpSystem( JE_byte startTopic )
 		{
 			lastkey_sym = SDLK_ESCAPE;
 		}
-	} while (lastkey_sym != SDLK_ESCAPE);
+	} while (lastkey_sym != SDLK_ESCAPE || lastkey_sym != SDLK_RCTRL);
 }
 
 // cost to upgrade a weapon power from power-1 (where power == 0 indicates an unupgraded weapon)
@@ -654,6 +655,7 @@ void JE_loadScreen( void )
 				}
 				break;
 			case SDLK_RETURN:
+			case SDLK_LCTRL:
 				if (sel < max)
 				{
 					if (saveFiles[sel - 1].level > 0)
@@ -672,6 +674,8 @@ void JE_loadScreen( void )
 
 				break;
 			case SDLK_ESCAPE:
+			case SDLK_RCTRL:
+			case SDLK_LALT:
 				quit = true;
 				break;
 			default:
@@ -992,6 +996,9 @@ void JE_highScoreScreen( void )
 			{
 			case SDLK_RETURN:
 			case SDLK_ESCAPE:
+			case SDLK_RCTRL:
+			case SDLK_LALT:
+			case SDLK_LCTRL:
 				quit = true;
 				break;
 			default:
@@ -1079,6 +1086,7 @@ void JE_doInGameSetup( void )
 		quitRequested = false;
 
 		keysactive[SDLK_ESCAPE] = false;
+		keysactive[SDLK_RCTRL] = false;
 
 #ifdef WITH_NETWORK
 		if (isNetworkGame)
@@ -1218,6 +1226,7 @@ JE_boolean JE_inGameSetup( void )
 			switch (lastkey_sym)
 			{
 				case SDLK_RETURN:
+				case SDLK_LCTRL:
 					JE_playSampleNum(S_SELECT);
 					switch (sel)
 					{
@@ -1251,6 +1260,8 @@ JE_boolean JE_inGameSetup( void )
 					}
 					break;
 				case SDLK_ESCAPE:
+				case SDLK_RCTRL:
+				case SDLK_LALT:
 					quit = true;
 					JE_playSampleNum(S_SPRING);
 					break;
@@ -1643,10 +1654,13 @@ void JE_highScoreCheck( void )
 								}
 								break;
 							case SDLK_ESCAPE:
+							case SDLK_RCTRL:
+							case SDLK_LALT:
 								quit = true;
 								cancel = true;
 								break;
 							case SDLK_RETURN:
+							case SDLK_LCTRL:
 								quit = true;
 								break;
 						}
@@ -2476,10 +2490,13 @@ void JE_operation( JE_byte slot )
 						}
 						break;
 					case SDLK_ESCAPE:
+					case SDLK_RCTRL:
+					case SDLK_LALT:
 						quit = true;
 						JE_playSampleNum(S_SPRING);
 						break;
 					case SDLK_RETURN:
+					case SDLK_LCTRL:
 						quit = true;
 						JE_saveGame(slot, stemp);
 						JE_playSampleNum(S_SELECT);
@@ -2753,7 +2770,7 @@ void JE_mainKeyboardInput( void )
 	pause_pressed = pause_pressed || keysactive[SDLK_p];
 
 	/* in-game setup */
-	ingamemenu_pressed = ingamemenu_pressed || keysactive[SDLK_ESCAPE];
+	ingamemenu_pressed = ingamemenu_pressed || (keysactive[SDLK_ESCAPE] || keysactive[SDLK_RCTRL]);
 
 	if (keysactive[SDLK_BACKSPACE])
 	{

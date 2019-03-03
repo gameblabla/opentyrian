@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-#include "SDL.h"
+#include <SDL/SDL.h>
 
 typedef void (*ScalerFunction)( SDL_Surface *dst, SDL_Surface *src );
 

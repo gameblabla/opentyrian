@@ -46,7 +46,7 @@
 #include "video.h"
 #include "video_scale.h"
 
-#include "SDL.h"
+#include <SDL/SDL.h>
 
 #include <assert.h>
 #include <stdio.h>
@@ -200,6 +200,7 @@ void opentyrian_menu( void )
 				break;
 				
 			case SDLK_RETURN:
+			case SDLK_LCTRL:
 				switch (sel)
 				{
 				case MENU_ABOUT:
@@ -262,6 +263,8 @@ void opentyrian_menu( void )
 				break;
 				
 			case SDLK_ESCAPE:
+			case SDLK_RCTRL:
+			case SDLK_LALT:
 				quit = true;
 				JE_playSampleNum(S_SPRING);
 				break;

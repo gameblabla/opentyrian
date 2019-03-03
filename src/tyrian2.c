@@ -3527,9 +3527,12 @@ bool JE_titleScreen( JE_boolean animate )
 				switch (lastkey_sym)
 				{
 				case SDLK_ESCAPE:
+				case SDLK_RCTRL:
+				case SDLK_LALT:
 					quit = true;
 					break;
 				case SDLK_RETURN:
+				case SDLK_LCTRL:
 					JE_playSampleNum(S_SELECT);
 					switch (menu)
 					{

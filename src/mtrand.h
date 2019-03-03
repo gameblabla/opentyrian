@@ -19,10 +19,12 @@
 #ifndef MTRAND_H
 #define MTRAND_H
 
+#include <stdint.h>
+
 #define MT_RAND_MAX 0xffffffffUL
 
-void mt_srand( unsigned long s );
-unsigned long mt_rand( void );
+void mt_srand( uint64_t s );
+uint64_t mt_rand( void );
 float mt_rand_1( void );
 float mt_rand_lt1( void );
 

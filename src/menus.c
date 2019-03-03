@@ -73,6 +73,7 @@ bool select_gameplay( void )
 				break;
 
 			case SDLK_RETURN:
+			case SDLK_LCTRL:
 				if (gameplay == GAMEPLAY_NAME_COUNT - 1)
 				{
 					JE_playSampleNum(S_SPRING);
@@ -88,6 +89,8 @@ bool select_gameplay( void )
 				return true;
 
 			case SDLK_ESCAPE:
+			case SDLK_RCTRL:
+			case SDLK_LALT:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				fade_black(10); */
@@ -148,6 +151,7 @@ bool select_episode( void )
 				break;
 
 			case SDLK_RETURN:
+			case SDLK_LCTRL:
 				if (!episodeAvail[episode - 1])
 				{
 					JE_playSampleNum(S_SPRING);
@@ -161,6 +165,8 @@ bool select_episode( void )
 				return true;
 
 			case SDLK_ESCAPE:
+			case SDLK_RCTRL:
+			case SDLK_LALT:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				fade_black(10); */
@@ -233,6 +239,7 @@ bool select_difficulty( void )
 				break;
 
 			case SDLK_RETURN:
+			case SDLK_LCTRL:
 				JE_playSampleNum(S_SELECT);
 				/* fading handled elsewhere
 				fade_black(10); */
@@ -246,6 +253,8 @@ bool select_difficulty( void )
 				return true;
 
 			case SDLK_ESCAPE:
+			case SDLK_RCTRL:
+			case SDLK_LALT:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				fade_black(10); */

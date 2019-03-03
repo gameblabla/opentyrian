@@ -829,12 +829,12 @@ static enum de_mode_t JE_modeSelect( void )
 		} while(!newkey);
 
 		/* See what was pressed */
-		if (keysactive[SDLK_ESCAPE])
+		if (keysactive[SDLK_ESCAPE] || keysactive[SDLK_LCTRL] || keysactive[SDLK_RCTRL])
 		{
 			mode = MODE_NONE; /* User is quitting, return failure */
 			break;
 		}
-		if (keysactive[SDLK_RETURN])
+		if (keysactive[SDLK_RETURN] || keysactive[SDLK_LALT])
 		{
 			break; /* User has selected, return choice */
 		}
@@ -1646,6 +1646,12 @@ static enum de_state_t DE_RunTick( void )
 	if (keysactive[SDLK_ESCAPE])
 	{
 		keysactive[SDLK_ESCAPE] = false;
+		return(STATE_INIT); /* STATE_INIT drops us to the mode select */
+	}
+	
+	if (keysactive[SDLK_RCTRL])
+	{
+		keysactive[SDLK_RCTRL] = false;
 		return(STATE_INIT); /* STATE_INIT drops us to the mode select */
 	}
 

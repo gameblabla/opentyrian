@@ -81,9 +81,12 @@ bool xmas_prompt( void )
 					break;
 					
 				case SDLK_RETURN:
+				case SDLK_LCTRL:
 					decided = true;
 					break;
 				case SDLK_ESCAPE:
+				case SDLK_RCTRL:
+				case SDLK_LALT:
 					decided = true;
 					quit = true;
 					break;
