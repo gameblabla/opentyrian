@@ -26,7 +26,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-bool fullscreen_enabled = false;
+bool fullscreen_enabled = true;
 
 SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *VGAScreen2;
@@ -72,7 +72,7 @@ int can_init_scaler( unsigned int new_scaler, bool fullscreen )
 	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
 	
 	// test each bitdepth
-	for (uint bpp = 32; bpp > 0; bpp -= 8)
+	for (uint bpp = 8; bpp < 32; bpp += 8)
 	{
 		uint temp_bpp = SDL_VideoModeOK(w, h, bpp, flags);
 		
@@ -98,7 +98,7 @@ bool init_scaler( unsigned int new_scaler, bool fullscreen )
 	int w = scalers[new_scaler].width,
 	    h = scalers[new_scaler].height;
 	int bpp = can_init_scaler(new_scaler, fullscreen);
-	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
+	int flags = SDL_HWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
 	
 	if (bpp == 0)
 		return false;

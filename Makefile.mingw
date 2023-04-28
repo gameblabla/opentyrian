@@ -1,0 +1,69 @@
+# BUILD SETTINGS ###########################################
+
+CC = i686-w64-mingw32-gcc
+
+PLATFORM := WIN32
+
+TARGET := opentyrian
+
+WITH_NETWORK := false
+
+############################################################
+
+STRIP := i686-w64-mingw32-strip
+
+SDL_CONFIG = /usr/i686-w64-mingw32/bin/sdl-config
+
+SRCS := $(wildcard src/*.c)
+OBJS := $(SRCS:src/%.c=obj/%.o)
+
+# FLAGS ####################################################
+
+EXTRA_CFLAGS +=  -O2 -fdata-sections -ffunction-sections -DNDEBUG -fno-PIC -fno-common -fno-PIC -flto -DTARGET_WIN32 -I/usr/i686-w64-mingw32/include/SDL
+EXTRA_CFLAGS += -MMD -pedantic
+ifeq ($(WITH_NETWORK), true)
+    EXTRA_CFLAGS += -DWITH_NETWORK
+endif
+
+# HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
+HG_REV := 2.1.20130907
+ifneq ($(HG_REV), )
+    EXTRA_CFLAGS += '-DHG_REV="$(HG_REV)"'
+endif
+
+EXTRA_LDLIBS += -lm
+
+SDL_CFLAGS := 
+SDL_LDLIBS := -Wl,--start-group -lSDLmain -lSDL -lmingw32 -lgdi32 -lwinmm -mwindows -Wl,--end-group -s
+ifeq ($(WITH_NETWORK), true)
+    SDL_LDLIBS += -lSDL_net
+endif
+
+ALL_CFLAGS += -std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
+ALL_LDFLAGS += $(LDFLAGS)
+LDLIBS += $(EXTRA_LDLIBS) $(SDL_LDLIBS)  -Wl,--as-needed -Wl,--gc-sections -flto -s
+
+# RULES ####################################################
+
+.PHONY : all release clean
+
+all : $(TARGET)
+
+release : all
+	$(STRIP) $(TARGET)
+
+clean :
+	rm -rf obj/*
+	rm -f $(TARGET)
+
+ifneq ($(MAKECMDGOALS), clean)
+    -include $(OBJS:.o=.d)
+endif
+
+$(TARGET) : $(OBJS)
+	$(CC) -o $@ $(ALL_LDFLAGS) $^ $(LDLIBS)
+
+obj/%.o : src/%.c
+	@mkdir -p "$(dir $@)"
+	$(CC) -c -o $@ $(ALL_CFLAGS) $<
+

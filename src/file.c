@@ -33,7 +33,7 @@ const char *data_dir( void )
 	const char *dirs[] =
 	{
 		custom_data_dir,
-		TYRIAN_DIR,
+		//TYRIAN_DIR,
 		"data",
 		".",
 	};
